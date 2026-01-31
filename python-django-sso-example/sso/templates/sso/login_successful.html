@@ -42,7 +42,19 @@
               >
             </div>
           </div>
-          <div>
+
+          <!-- Display Required Information -->
+          <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+            <h3 style="margin-top: 0;">User Information</h3>
+            <p><strong>First Name:</strong> {{ first_name }}</p>
+            <p><strong>Last Name:</strong> {{ last_name }}</p>
+            <p><strong>Organization ID:</strong> {{ organization_id }}</p>
+            <p><strong>Organization Name:</strong> {{ organization_name }}</p>
+          </div>
+          
+          <!-- Raw Profile (for reference) -->
+          <div style="margin-top: 20px;">
+            <h3>Raw Profile Data</h3>
             <pre id="noborder" class="prettyprint noborder">
                         {{raw_profile}}
                     </pre

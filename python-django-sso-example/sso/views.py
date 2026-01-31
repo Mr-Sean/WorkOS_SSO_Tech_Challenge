@@ -52,8 +52,8 @@ except ValueError:
     workos_client = None
 
 # Set custom API base URL for local development
-if settings.DEBUG:
-    os.environ["WORKOS_API_BASE_URL"] = "http://localhost:8000/"
+# if settings.DEBUG:
+    # os.environ["WORKOS_API_BASE_URL"] = "http://localhost:8000/"
 
 # Constants
 CUSTOMER_ORGANIZATION_ID = os.getenv("CUSTOMER_ORGANIZATION_ID")
@@ -71,6 +71,9 @@ def login(request):
             {
                 "p_profile": request.session.get("p_profile"),
                 "first_name": request.session.get("first_name"),
+                "last_name": request.session.get("last_name"),
+                "organization_id": request.session.get("organization_id"),
+                "organization_name": request.session.get("organization_name"),
                 "raw_profile": json.dumps(request.session.get("raw_profile"), indent=2),
             },
         )
@@ -137,8 +140,22 @@ def auth_callback(request):
         profile = client.sso.get_profile_and_token(code)
         # In SDK v5+, ProfileAndToken is a Pydantic model - use .dict() to convert to dict
         p_profile = profile.dict()
+
+        # Extract user information from the profile
+        first_name = p_profile["profile"]["first_name"]
+        last_name = p_profile["profile"]["last_name"]
+        organization_id = p_profile["profile"]["organization_id"]
+
+        # Fetch organization details to get the organization name
+        organization = client.organizations.get_organization(organization_id)
+        organization_name = organization.name
+
+        # Store all session info
         request.session["p_profile"] = p_profile
-        request.session["first_name"] = p_profile["profile"]["first_name"]
+        request.session["first_name"] = first_name
+        request.session["last_name"] = last_name
+        request.session["organization_id"] = organization_id
+        request.session["organization_name"] = organization_name
         request.session["raw_profile"] = p_profile["profile"]
         request.session["session_active"] = True
         return redirect("login")
