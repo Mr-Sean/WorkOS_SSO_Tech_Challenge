@@ -1,150 +1,279 @@
-# python-django-sso-example
+# WorkOS SSO Django Integration - Technical Challenge
 
-An example Django application demonstrating how to use the [WorkOS Python SDK](https://github.com/workos/workos-python) to authenticate users via SSO.
+**Repository:** [https://github.com/Mr-Sean/WorkOS_SSO_Tech_Challenge](https://github.com/Mr-Sean/WorkOS_SSO_Tech_Challenge)
+
+A Django application demonstrating Single Sign-On (SSO) integration using the WorkOS API and Test Identity Provider.
+
+## Overview
+
+This project extends the [WorkOS Python Django SSO example](https://github.com/workos/python-django-example-applications) to implement a complete SSO authentication flow that:
+- Authenticates users via the WorkOS Test Identity Provider
+- Displays user profile information (first name, last name)
+- Shows organization details (organization ID and name)
+- Makes an additional API call to fetch the organization name
 
 ## Prerequisites
 
-- Python 3.6+
+Before you begin, ensure you have the following installed:
+- **Python 3.10+** (Python 3.10.0 or higher)
+- **Git** (for cloning the repository)
+- **pip** (Python package manager)
+- A **WorkOS account** ([Sign up here](https://dashboard.workos.com/))
 
-## Django Project Setup
+## Project Setup
 
-1. Clone the main git repo for these Python example apps using your preferred secure method (HTTPS or SSH).
-
-   ```bash
-   # HTTPS
-   $ git clone https://github.com/workos/python-django-example-applications.git
-   ```
-
-   or
-
-   ```bash
-   # SSH
-   $ git clone git@github.com:workos/python-django-example-applications.git
-   ```
-
-2. Navigate to the Admin Portal example app within the cloned repo.
-
-   ```bash
-   $ cd python-django-example-applications/python-django-sso-example
-   ```
-
-3. Create and source a Python virtual environment. You should then see `(env)` at the beginning of your command-line prompt.
-
-   ```bash
-   $ python3 -m venv env
-   $ source env/bin/activate
-   (env) $
-   ```
-
-4. Install the cloned app's dependencies. If the `pip` command doesn't work, try `pip3` instead.
-
-   ```bash
-   (env) $ pip install -r requirements.txt
-   ```
-
-5. Obtain and make note of the following values. In the next step, these will be set as environment variables.
-
-   - Your [WorkOS API key](https://dashboard.workos.com/api-keys)
-   - Your [SSO-specific, WorkOS Client ID](https://dashboard.workos.com/sso/configuration)
-   - The redirect URI. For this example, we'll use http://localhost:8000/auth/callback
-
-6. Ensure you're in the root directory for the example app, `python-django-sso-example/`. Create a `.env` file to securely store the environment variables. Open this file with the Nano text editor. (This file is listed in this repo's `.gitignore` file, so your sensitive information will not be checked into version control.)
-
-   ```bash
-   (env) $ touch .env
-   (env) $ nano .env
-   ```
-
-7. Once the Nano text editor opens, you can directly edit the `.env` file by listing the environment variables:
-
-   ```bash
-   export WORKOS_API_KEY=<value found in step 6>
-   export WORKOS_CLIENT_ID=<value found in step 6>
-   export REDIRECT_URI='http://localhost:8000/auth/callback'
-   ```
-
-   To exit the Nano text editor, type `CTRL + x`. When prompted to "Save modified buffer", type `Y`, then press the `Enter` or `Return` key.
-
-8. Source the environment variables so they are accessible to the operating system.
-
-   ```bash
-   (env) $ source .env
-   ```
-
-   You can ensure the environment variables were set correctly by running the following commands. The output should match the corresponding values.
-
-   ```bash
-   (env) $ echo $WORKOS_API_KEY
-   (env) $ echo $WORKOS_CLIENT_ID
-   (env) $ echo $REDIRECT_URI
-   ```
-
-9. Run the Django migrations. Again, ensure you're in the `python-django-sso-example/` directory where the `manange.py` file is.
-
-   ```bash
-   (env) $ python3 manage.py migrate
-   ```
-
-   You should see output like:
-
-   ```bash
-   Operations to perform:
-   Apply all migrations: admin, auth, contenttypes, sessions
-   Running migrations:
-   Applying contenttypes.0001_initial... OK
-   Applying auth.0001_initial... OK
-   . . .
-   ```
-
-10. In `python-django-sso-example/sso/views.py` change the `ORGANIZATION_ID` string value to the organization ID that you are targeting. This can be found in the WorkOS Dashboard under the Organization Settings.
-
-11. The final setup step is to start the server.
+### Step 1: Clone the Repository
 
 ```bash
-(env) $ python3 manage.py runserver --insecure
+git clone https://github.com/Mr-Sean/WorkOS_SSO_Tech_Challenge.git
+cd WorkOS_SSO_Tech_Challenge
 ```
 
-You'll know the server is running when you see no warnings or errors in the CLI, and output similar to the following is displayed:
+### Step 2: Create a Virtual Environment
+
+Create and activate a Python virtual environment to isolate project dependencies:
+
+**On Windows (PowerShell or Command Prompt):**
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+**On macOS/Linux:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+You should see `(venv)` at the beginning of your terminal prompt, indicating the virtual environment is active.
+
+### Step 3: Install Dependencies
+
+Install all required Python packages:
 
 ```bash
-Watching for file changes with StatReloader
-Performing system checks...
-
-System check identified no issues (0 silenced).
-March 18, 2021 - 04:54:50
-Django version 3.1.7, using settings 'workos_django.settings'
-Starting development server at http://127.0.0.1:8000/
-Quit the server with CONTROL-C.
+pip install -r requirements.txt
 ```
 
-Navigate to `localhost:8000` in your web browser. You should see a "Login" link. If you click this link, you'll be redirected to an HTTP `404` page because we haven't set up SSO yet!
+This will install:
+- Django 4.1.3
+- WorkOS Python SDK 5.40.0
+- python-dotenv for environment variable management
+- Other required dependencies
 
-You can stop the local Django server for now by entering `CTRL + c` on the command line.
+### Step 4: Configure Environment Variables
 
-## SSO Setup with WorkOS
+Create a `.env` file in the project root directory with your WorkOS credentials:
 
-Follow the [SSO authentication flow instructions](https://workos.com/docs/sso/guide/introduction) to set up an SSO connection.
+```env
+WORKOS_API_KEY=your_workos_api_key_here
+WORKOS_CLIENT_ID=your_workos_client_id_here
+REDIRECT_URI=http://localhost:8000/auth/callback
+CUSTOMER_ORGANIZATION_ID=org_01KFFRB2F17SH6C3JRX0Q45HQ5
+```
 
-When you get to the step where you provide the `REDIRECT_URI` value, use http://localhost:8000/auth/callback.
+**Where to find these values:**
+1. Log into your [WorkOS Dashboard](https://dashboard.workos.com/)
+2. Go to **API Keys** (in the Developer section) to get your:
+   - `WORKOS_API_KEY` (starts with `sk_test_`)
+   - `WORKOS_CLIENT_ID` (starts with `client_`)
+3. The `CUSTOMER_ORGANIZATION_ID` uses the Test Organization that comes pre-configured in your staging environment
+4. The `REDIRECT_URI` is the callback endpoint where WorkOS redirects after authentication
 
-If you get stuck, please reach out to us at support@workos.com so we can help.
+**Important:** Never commit the `.env` file to version control. It's already included in `.gitignore`.
 
-## Testing the Integration
+### Step 5: Run Database Migrations
 
-12. Naviagte to the `python-django-sso-example` directory, which contains the `manage.py` file. Source the virtual environment we created earlier, if it isn't still activated from the steps above. Start the Django server locally.
+Set up the Django database:
 
 ```bash
-$ cd ~/Desktop/python-django-sso-example/
-$ source env/bin/activate
-(env) $ python3 manage.py runserver
+python manage.py migrate
 ```
 
-Once running, navigate to http://localhost:8000 to test out the SSO workflow.
+You should see output confirming that migrations were applied successfully.
 
-Hooray!
+### Step 6: Start the Development Server
 
-## Need help?
+Run the Django development server:
 
-When you clone this repo, the `DEBUG` setting is `False` by default in `workos_django/settings.py`. You can set `DEBUG=True` if you need to troubleshoot something during the tutorial, but you must use `DEBUG=False` in order to successfully connect to the WorkOS API.
+```bash
+python manage.py runserver
+```
 
-If you get stuck and aren't able to resolve the issue by reading our API reference or tutorials, you can reach out to us at support@workos.com and we'll lend a hand.
+The server will start at `http://127.0.0.1:8000/` (or `http://localhost:8000/`)
+
+## Testing the SSO Integration
+
+### Step 1: Access the Application
+
+Open your web browser and navigate to:
+```
+http://localhost:8000
+```
+
+You should see a login page with three authentication options:
+- Google OAuth
+- Microsoft OAuth
+- **Enterprise SAML** ← Click this one
+
+### Step 2: Authenticate with Test Provider
+
+1. Click the **"Enterprise SAML"** button
+2. You'll be redirected to the WorkOS Test Identity Provider page
+3. Fill in the test user information:
+   - **Email:** Must use `@example.com` domain (e.g., `john.doe@example.com`)
+   - **First name:** Any first name (e.g., `John`)
+   - **Last name:** Any last name (e.g., `Doe`)
+   - **Group:** (Optional) Any group name
+4. Click **"Continue"**
+
+**Important:** The email must use the `@example.com` domain to match the Test Organization's verified domain.
+
+### Step 3: View Authentication Results
+
+After successful authentication, you'll be redirected back to your application and see:
+
+**User Information:**
+- First Name (from the identity provider)
+- Last Name (from the identity provider)
+- Organization ID
+- Organization Name (fetched via additional API call)
+
+**Raw Profile Data:**
+- Complete JSON profile data returned from WorkOS
+
+## Code Changes Made
+
+This project includes the following modifications to the original WorkOS example:
+
+### 1. Environment Configuration (`.env`)
+Added the `CUSTOMER_ORGANIZATION_ID` environment variable to specify which organization to authenticate against.
+
+### 2. Updated `sso/views.py`
+
+**Disabled local API base URL override** (lines 54-56):
+```python
+# Commented out to use the actual WorkOS API instead of localhost
+# if settings.DEBUG:
+#     os.environ["WORKOS_API_BASE_URL"] = "http://localhost:8000/"
+```
+
+**Enhanced `auth_callback` function** (lines 135-160):
+- Extracts `first_name`, `last_name`, and `organization_id` from the SSO profile
+- Makes an additional API call to fetch the organization name:
+  ```python
+  organization = client.organizations.get_organization(organization_id)
+  organization_name = organization.name
+  ```
+- Stores all information in the Django session
+
+**Updated `login` function** (lines 67-79):
+- Passes additional variables to the template:
+  - `first_name`
+  - `last_name`
+  - `organization_id`
+  - `organization_name`
+
+### 3. Updated `sso/templates/sso/login_successful.html`
+
+Added a clean display section for the required information (lines 46-53):
+```html
+<div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+  <h3 style="margin-top: 0;">User Information</h3>
+  <p><strong>First Name:</strong> {{ first_name }}</p>
+  <p><strong>Last Name:</strong> {{ last_name }}</p>
+  <p><strong>Organization ID:</strong> {{ organization_id }}</p>
+  <p><strong>Organization Name:</strong> {{ organization_name }}</p>
+</div>
+```
+
+## Project Structure
+
+```
+WorkOS_SSO_Tech_Challenge/
+├── sso/                          # Django app for SSO functionality
+│   ├── views.py                  # SSO authentication logic (modified)
+│   ├── templates/
+│   │   └── sso/
+│   │       ├── login.html        # Login page
+│   │       └── login_successful.html  # Success page (modified)
+│   └── ...
+├── workos_django/                # Main Django project
+│   ├── settings.py               # Django settings
+│   ├── urls.py                   # URL routing
+│   └── ...
+├── .env                          # Environment variables (create this)
+├── .gitignore                    # Git ignore rules
+├── manage.py                     # Django management script
+├── requirements.txt              # Python dependencies
+└── README.md                     # This file
+```
+
+## Troubleshooting
+
+### Issue: "No Connection associated with Organization"
+
+**Solution:** Make sure you're using the Test Organization ID (`org_01KFFRB2F17SH6C3JRX0Q45HQ5`) in your `.env` file, which comes pre-configured in the WorkOS staging environment.
+
+### Issue: "Profile does not belong to the target organization"
+
+**Solution:** Use an email address with the `@example.com` domain when testing (e.g., `test@example.com`). This matches the Test Organization's verified domain.
+
+### Issue: "This is not a valid redirect URI"
+
+**Solution:** 
+1. Go to your [WorkOS Dashboard](https://dashboard.workos.com/)
+2. Navigate to **Redirects** (in the Developer section)
+3. Ensure `http://localhost:8000/auth/callback` is listed as an allowed redirect URI
+
+### Issue: Virtual environment won't activate
+
+**Windows PowerShell users:** If you get a security error, run:
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+### Issue: Port 8000 is already in use
+
+**Solution:** Either stop the other process using port 8000, or run Django on a different port:
+```bash
+python manage.py runserver 8080
+```
+Then update your redirect URI to `http://localhost:8080/auth/callback` in both the `.env` file and WorkOS dashboard.
+
+## Resources
+
+- [WorkOS Documentation](https://workos.com/docs)
+- [WorkOS SSO Documentation](https://workos.com/docs/sso)
+- [WorkOS Test Provider Documentation](https://workos.com/docs/sso/test-sso)
+- [WorkOS Python SDK](https://github.com/workos/workos-python)
+- [Django Documentation](https://docs.djangoproject.com/)
+
+## Technical Challenge Completion
+
+This project fulfills all requirements of the WorkOS Technical Challenge:
+
+✅ **Setup:** Cloned the WorkOS Python Django example application  
+✅ **SSO Integration:** Connected to the Test Provider  
+✅ **Authentication:** Users can sign in via the Test Provider  
+✅ **Display Requirements:**
+  - First name and last name from identity provider
+  - Organization ID
+  - Organization name (via additional GET request)  
+✅ **Documentation:** Comprehensive README with setup instructions  
+✅ **Demo Recording:** Available in repository
+
+## Support
+
+If you encounter any issues:
+1. Check the Troubleshooting section above
+2. Review the [WorkOS Documentation](https://workos.com/docs)
+3. Contact WorkOS support at support@workos.com
+
+## Author
+
+**Sean** - [GitHub Profile](https://github.com/Mr-Sean)
+
+## License
+
+This project is based on the [WorkOS Python Django example](https://github.com/workos/python-django-example-applications) and follows the same license terms.
