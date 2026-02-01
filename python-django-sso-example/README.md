@@ -4,6 +4,7 @@
 
 A Django application demonstrating Single Sign-On (SSO) integration using the WorkOS API and Test Identity Provider.
 
+
 ## Overview
 
 This project extends the [WorkOS Python Django SSO example](https://github.com/workos/python-django-example-applications) to implement a complete SSO authentication flow that:
@@ -12,6 +13,7 @@ This project extends the [WorkOS Python Django SSO example](https://github.com/w
 - Shows organization details (organization ID and name)
 - Makes an additional API call to fetch the organization name
 
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:
@@ -19,6 +21,7 @@ Before you begin, ensure you have the following installed:
 - **Git** (for cloning the repository)
 - **pip** (Python package manager)
 - A **WorkOS account** ([Sign up here](https://dashboard.workos.com/))
+
 
 ## Project Setup
 
@@ -102,6 +105,7 @@ python manage.py runserver
 
 The server will start at `http://127.0.0.1:8000/` (or `http://localhost:8000/`)
 
+
 ## Testing the SSO Integration
 
 ### Step 1: Access the Application
@@ -141,6 +145,7 @@ After successful authentication, you'll be redirected back to your application a
 
 **Raw Profile Data:**
 - Complete JSON profile data returned from WorkOS
+
 
 ## Code Changes Made
 
@@ -189,7 +194,6 @@ Added a clean display section for the required information (lines 46-53):
 
 ## Project Structure
 
-```
 WorkOS_SSO_Tech_Challenge/
 ├── sso/                          # Django app for SSO functionality
 │   ├── views.py                  # SSO authentication logic (modified)
@@ -207,39 +211,7 @@ WorkOS_SSO_Tech_Challenge/
 ├── manage.py                     # Django management script
 ├── requirements.txt              # Python dependencies
 └── README.md                     # This file
-```
 
-## Troubleshooting
-
-### Issue: "No Connection associated with Organization"
-
-**Solution:** Make sure you're using the Test Organization ID (`org_01KFFRB2F17SH6C3JRX0Q45HQ5`) in your `.env` file, which comes pre-configured in the WorkOS staging environment.
-
-### Issue: "Profile does not belong to the target organization"
-
-**Solution:** Use an email address with the `@example.com` domain when testing (e.g., `test@example.com`). This matches the Test Organization's verified domain.
-
-### Issue: "This is not a valid redirect URI"
-
-**Solution:** 
-1. Go to your [WorkOS Dashboard](https://dashboard.workos.com/)
-2. Navigate to **Redirects** (in the Developer section)
-3. Ensure `http://localhost:8000/auth/callback` is listed as an allowed redirect URI
-
-### Issue: Virtual environment won't activate
-
-**Windows PowerShell users:** If you get a security error, run:
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-### Issue: Port 8000 is already in use
-
-**Solution:** Either stop the other process using port 8000, or run Django on a different port:
-```bash
-python manage.py runserver 8080
-```
-Then update your redirect URI to `http://localhost:8080/auth/callback` in both the `.env` file and WorkOS dashboard.
 
 ## Resources
 
@@ -249,26 +221,21 @@ Then update your redirect URI to `http://localhost:8080/auth/callback` in both t
 - [WorkOS Python SDK](https://github.com/workos/workos-python)
 - [Django Documentation](https://docs.djangoproject.com/)
 
+
 ## Technical Challenge Completion
 
 This project fulfills all requirements of the WorkOS Technical Challenge:
 
-✅ **Setup:** Cloned the WorkOS Python Django example application  
-✅ **SSO Integration:** Connected to the Test Provider  
-✅ **Authentication:** Users can sign in via the Test Provider  
-✅ **Display Requirements:**
+**Setup:** Cloned the WorkOS Python Django example application  
+**SSO Integration:** Connected to the Test Provider  
+**Authentication:** Users can sign in via the Test Provider  
+**Display Requirements:**
   - First name and last name from identity provider
   - Organization ID
   - Organization name (via additional GET request)  
-✅ **Documentation:** Comprehensive README with setup instructions  
-✅ **Demo Recording:** Available in repository
+**Documentation:** Comprehensive README with setup instructions  
+**Demo Recording:** Available in repository
 
-## Support
-
-If you encounter any issues:
-1. Check the Troubleshooting section above
-2. Review the [WorkOS Documentation](https://workos.com/docs)
-3. Contact WorkOS support at support@workos.com
 
 ## Author
 
