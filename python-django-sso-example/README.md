@@ -163,7 +163,7 @@ Added the `CUSTOMER_ORGANIZATION_ID` environment variable to specify which organ
 #     os.environ["WORKOS_API_BASE_URL"] = "http://localhost:8000/"
 ```
 
-**Enhanced `auth_callback` function** (lines 135-160):
+**Enhanced `auth_callback` function** (lines 144-158):
 - Extracts `first_name`, `last_name`, and `organization_id` from the SSO profile
 - Makes an additional API call to fetch the organization name:
   ```python
@@ -172,16 +172,15 @@ Added the `CUSTOMER_ORGANIZATION_ID` environment variable to specify which organ
   ```
 - Stores all information in the Django session
 
-**Updated `login` function** (lines 67-79):
+**Updated `login` function** (lines 74-76):
 - Passes additional variables to the template:
-  - `first_name`
   - `last_name`
   - `organization_id`
   - `organization_name`
 
 ### 3. Updated `sso/templates/sso/login_successful.html`
 
-Added a clean display section for the required information (lines 46-53):
+Added a clean display section for the required information (lines 46-52):
 ```html
 <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
   <h3 style="margin-top: 0;">User Information</h3>
@@ -194,23 +193,60 @@ Added a clean display section for the required information (lines 46-53):
 
 ## Project Structure
 
+```
 WorkOS_SSO_Tech_Challenge/
 ├── sso/                          # Django app for SSO functionality
-│   ├── views.py                  # SSO authentication logic (modified)
-│   ├── templates/
+│   ├── migrations/               # Database migrations
+│   │   ├── __pycache__/          # Python bytecode cache
+│   │   └── __init__.py
+│   ├── static/                   # Static assets (CSS, images)
+│   │   ├── css/
+│   │   │   └── login.css
+│   │   └── images/
+│   │       ├── google-button.png
+│   │       ├── microsoft-button.png
+│   │       ├── saml-button.png
+│   │       ├── workos-logo-with-text.png
+│   │       └── workos_logo_new.png
+│   ├── templates/                # HTML templates
 │   │   └── sso/
 │   │       ├── login.html        # Login page
 │   │       └── login_successful.html  # Success page (modified)
-│   └── ...
+│   ├── __pycache__/              # Python bytecode cache
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── tests.py
+│   ├── urls.py
+│   ├── views.py                  # SSO authentication logic (modified)
+│   └── __init__.py
+├── venv/                         # Virtual environment (auto-generated)
+│   ├── Include/
+│   ├── Lib/
+│   │   └── site-packages/        # Installed Python packages
+│   └── Scripts/                  # Activation scripts
+│       ├── activate
+│       ├── activate.bat
+│       ├── Activate.ps1
+│       ├── deactivate.bat
+│       ├── pip.exe
+│       └── python.exe
 ├── workos_django/                # Main Django project
+│   ├── __pycache__/              # Python bytecode cache
+│   ├── asgi.py
 │   ├── settings.py               # Django settings
 │   ├── urls.py                   # URL routing
-│   └── ...
+│   ├── wsgi.py
+│   └── __init__.py
 ├── .env                          # Environment variables (create this)
 ├── .gitignore                    # Git ignore rules
+├── db.sqlite3                    # SQLite database
+├── LICENSE                       # License file
 ├── manage.py                     # Django management script
-├── requirements.txt              # Python dependencies
-└── README.md                     # This file
+├── README.md                     # This file
+├── README_OLD.md                 # Original README from base project
+└── requirements.txt              # Python dependencies
+```
 
 
 ## Resources
@@ -226,15 +262,15 @@ WorkOS_SSO_Tech_Challenge/
 
 This project fulfills all requirements of the WorkOS Technical Challenge:
 
-**Setup:** Cloned the WorkOS Python Django example application  
-**SSO Integration:** Connected to the Test Provider  
-**Authentication:** Users can sign in via the Test Provider  
-**Display Requirements:**
+✅ **Setup:** Cloned the WorkOS Python Django example application  
+✅ **SSO Integration:** Connected to the Test Provider  
+✅ **Authentication:** Users can sign in via the Test Provider  
+✅ **Display Requirements:**
   - First name and last name from identity provider
   - Organization ID
   - Organization name (via additional GET request)  
-**Documentation:** Comprehensive README with setup instructions  
-**Demo Recording:** Available in repository
+✅ **Documentation:** Comprehensive README with setup instructions  
+✅ **Demo Recording:** Available in repository
 
 
 ## Author
